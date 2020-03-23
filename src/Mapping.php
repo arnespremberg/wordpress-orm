@@ -219,7 +219,6 @@ class Mapping {
 
     // Create an ID type string.
     $id_type        = 'ID';
-    $id_type_string = 'ID bigint(20) NOT NULL AUTO_INCREMENT';
 
     // Build the SQL CREATE TABLE command for use with dbDelta.
     $table_name = $wpdb->prefix . $mapped['ORM_Table'];
@@ -227,7 +226,6 @@ class Mapping {
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE " . $table_name . " (
-  " . $id_type_string . ",
   " . implode(",\n  ", $mapped['schema']) . ",
   PRIMARY KEY  (" . $id_type . ")
 ) $charset_collate;";

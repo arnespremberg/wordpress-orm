@@ -9,6 +9,9 @@ abstract class BaseModel {
 
   /**
    * Every model has an ID.
+   * @ORM_Column_Type bigint
+	 * @ORM_Column_Length 20
+	 * @ORM_Column_Null NOT NULL AUTO_INCREMENT
    * @var
    */
   protected $ID;

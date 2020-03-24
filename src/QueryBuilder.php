@@ -190,6 +190,52 @@ class QueryBuilder {
   }
 
   /**
+   * get table count
+   * @return $this
+   */
+  public function count() {
+    global $wpdb;
+
+    $values = [];
+
+    $sql = "SELECT COUNT(*) FROM " . $wpdb->prefix . $this->repository->getDBTable() . "
+    ";
+
+    // Combine the WHERE clauses and add to the SQL statement.
+    if (count($this->where)) {
+      $sql .= "WHERE
+      ";
+
+      $combined_where = [];
+      foreach ($this->where as $where) {
+
+        // Operators is not "IN" or "NOT IN"
+        if ($where['operator'] != 'IN' && $where['operator'] != 'NOT IN') {
+          $combined_where[] = $where['property'] . " " . $where['operator'] . " " . $where['placeholder'] . "
+          ";
+          $values[] = $where['value'];
+        }
+        // Operator is "IN" or "NOT IN"
+        else {
+          // Fail silently.
+          if (is_array($where['value'])) {
+            $combined_where[] = $where['property'] . " " . $where['operator'] . " (" . implode(", ", array_pad([], count($where['value']), $where['placeholder'])) . ")
+          ";
+
+            $values = array_merge($values, $where['value']);
+          }
+        }
+      }
+
+      $sql .= implode(' AND ', $combined_where);  // @todo - should allow more than AND in future.
+    }
+
+    $countquery = $wpdb->prepare($sql, $values);
+    $count = $wpdb->get_var ($countquery);
+    return $count;
+  }
+
+  /**
    * Run the query returning either a single object or an array of objects.
    *
    * @param bool $always_array

@@ -183,12 +183,12 @@ class Manager {
 
         $table_name = $wpdb->prefix . $values['table_name'];
 
-        $sql = "INSERT INTO " . $table_name . " (ID, " . implode(", ", $values['columns']) . ")
+        $sql = "INSERT INTO " . $table_name . " (" . implode(", ", $values['columns']) . ")
           VALUES
           ";
 
         while ($values['placeholders_count'] > 0) {
-          $sql .= "(%d, " . implode(", ", $values['placeholders']) . ")";
+          $sql .= "(" . implode(", ", $values['placeholders']) . ")";
 
           if ($values['placeholders_count'] > 1) {
             $sql .= ",
@@ -203,10 +203,16 @@ class Manager {
         ";
 
         $update_set = [];
+
+        unset($values['columns'][0]);
+        unset($values['values'][0]);
+
         foreach ($values['columns'] as $column) {
           $update_set[] = $column . "=VALUES(" . $column . ")";
         }
         $sql .= implode(", ", $update_set) . ";";
+
+        error_log($sql);
 
         // Insert using Wordpress prepare() which provides SQL injection protection (apparently).
         $prepared = $wpdb->prepare($sql, $values['values']);

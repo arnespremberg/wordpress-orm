@@ -212,8 +212,6 @@ class Manager {
         }
         $sql .= implode(", ", $update_set) . ";";
 
-        error_log($sql);
-
         // Insert using Wordpress prepare() which provides SQL injection protection (apparently).
         $prepared = $wpdb->prepare($sql, $values['values']);
 
